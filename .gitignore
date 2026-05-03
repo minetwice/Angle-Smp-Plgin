@@ -1,11 +1,16 @@
 ```
 # Compiled and build artifacts
 *.class
+*.o
+*.obj
+*.out
+build/
 target/
 
 # Dependencies
 lib/
 libs/
+dependency-reduced-pom.xml
 
 # Logs and temp files
 *.log
@@ -19,8 +24,15 @@ libs/
 # Editors
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# OS generated files
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# OS specific
 .DS_Store
 Thumbs.db
 ```
