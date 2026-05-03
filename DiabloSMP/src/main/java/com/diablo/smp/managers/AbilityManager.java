@@ -1,54 +1,39 @@
 package com.diablo.smp.managers;
 
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class AbilityManager {
-    
-    // Stores current stage (0, 1, 2) for each player
     private final Map<UUID, Integer> playerStages = new HashMap<>();
-    // Stores last crouch time for double-crouch detection
-    private final Map<UUID, Long> lastCrouchTime = new HashMap<>();
-    
-    public int getStage(Player player) {
-        return playerStages.getOrDefault(player.getUniqueId(), 0);
+    private final Map<UUID, Long> lastCrouch = new HashMap<>();
+
+    public int getStage(Player p) {
+        return playerStages.getOrDefault(p.getUniqueId(), 0);
     }
 
-    public void setStage(Player player, int stage) {
-        playerStages.put(player.getUniqueId(), Math.max(0, Math.min(2, stage)));
+    public void cycleStage(Player p) {
+        int next = (getStage(p) + 1) % 3;
+        playerStages.put(p.getUniqueId(), next);
+        p.sendMessage("§5§lABILITY SWITCHED §r§7to Stage " + (next + 1));
+        p.getWorld().playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_CHIME, 1.0f, 2.0f);
     }
 
-    public void cycleStage(Player player) {
-        int current = getStage(player);
-        int next = (current + 1) % 3; // Cycles 0 -> 1 -> 2 -> 0
-        playerStages.put(player.getUniqueId(), next);
-        
-        // Epic notification
-        player.sendMessage("§5§l⚡ ABILITY SWITCHED ⚡");
-        player.sendMessage("§7Now using: §eStage " + (next + 1) + "/3");
-        player.playSound(player.getLocation(), org.bukkit.Sound.BLOCK_END_PORTAL_FRAME_FILL, 0.8f, 1.5f);
-        player.spawnParticle(org.bukkit.Particle.END_ROD, player.getLocation().add(0, 1, 0), 30, 0.5, 0.5, 0.5, 0.05);
-    }
-
-    public boolean checkDoubleCrouch(Player player) {
+    public boolean checkDoubleCrouch(Player p) {
         long now = System.currentTimeMillis();
-        long last = lastCrouchTime.getOrDefault(player.getUniqueId(), 0L);
+        long last = lastCrouch.getOrDefault(p.getUniqueId(), 0L);
         
-        if (now - last < 500) { // Within 500ms = Double Crouch
-            lastCrouchTime.put(player.getUniqueId(), 0L); // Reset
+        if (now - last < 500) {
+            lastCrouch.put(p.getUniqueId(), 0L);
             return true;
         }
-        
-        lastCrouchTime.put(player.getUniqueId(), now);
+        lastCrouch.put(p.getUniqueId(), now);
         return false;
     }
 
     public void cleanup() {
         playerStages.clear();
-        lastCrouchTime.clear();
+        lastCrouch.clear();
     }
 }

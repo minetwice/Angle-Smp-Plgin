@@ -5,35 +5,22 @@ import java.util.Map;
 import java.util.UUID;
 
 public class CooldownManager {
-    
     private final Map<String, Long> cooldowns = new HashMap<>();
-    
-    public void setCooldown(UUID playerUuid, String abilityId, long durationMillis) {
-        String key = playerUuid.toString() + ":" + abilityId;
-        cooldowns.put(key, System.currentTimeMillis() + durationMillis);
-    }
-    
-    public boolean isOnCooldown(UUID playerUuid, String abilityId) {
-        String key = playerUuid.toString() + ":" + abilityId;
-        Long expiry = cooldowns.get(key);
-        return expiry != null && System.currentTimeMillis() < expiry;
-    }
-    
-    public long getRemainingCooldown(UUID playerUuid, String abilityId) {
-        String key = playerUuid.toString() + ":" + abilityId;
-        Long expiry = cooldowns.get(key);
-        if (expiry == null) return 0;
+
+    public boolean isOnCooldown(UUID uuid, String ability) {
+        String key = uuid.toString() + ":" + ability;
+        if (!cooldowns.containsKey(key)) return false;
         
-        long remaining = expiry - System.currentTimeMillis();
-        return Math.max(0, remaining);
+        long expiry = cooldowns.get(key);
+        if (System.currentTimeMillis() > expiry) {
+            cooldowns.remove(key);
+            return false;
+        }
+        return true;
     }
-    
-    public void removeCooldown(UUID playerUuid, String abilityId) {
-        String key = playerUuid.toString() + ":" + abilityId;
-        cooldowns.remove(key);
-    }
-    
-    public void cleanup() {
-        cooldowns.clear();
+
+    public void setCooldown(UUID uuid, String ability, long durationMillis) {
+        String key = uuid.toString() + ":" + ability;
+        cooldowns.put(key, System.currentTimeMillis() + durationMillis);
     }
 }
