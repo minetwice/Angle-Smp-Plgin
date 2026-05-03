@@ -1,0 +1,16 @@
+name: DiabloSMP
+version: '1.0.0'
+main: com.diablo.smp.DiabloPlugin
+api-version: '1.20'
+commands:
+  trust:
+    description: "Trust a player to exchange books safely."
+    usage: "/trust <player>"
+  diablo:
+    description: "Main admin command for Diablo SMP."
+    usage: "/diablo <give|reload|info> [player] [ability]"
+    permission: diablo.admin
+permissions:
+  diablo.admin:
+    description: "Allows access to admin commands"
+    default: op
