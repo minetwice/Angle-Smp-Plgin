@@ -1,17 +1,13 @@
 package com.diablo.smp.listeners;
 
 import com.diablo.smp.DiabloPlugin;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
-
-import java.util.HashMap;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class GUIListener implements Listener {
 
@@ -22,63 +18,58 @@ public class GUIListener implements Listener {
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player player)) return;
-        
-        String title = event.getView().getTitle();
-        if (!title.contains("Soul Absorption")) return;
-        
-        event.setCancelled(true); // Prevent moving items
-        
-        // Check if clicked slot is the center slot (4)
-        if (event.getSlot() == 4) {
-            ItemStack clickedItem = event.getCurrentItem();
-            
-            if (clickedItem != null && isDiabloBook(clickedItem)) {
-                // Remove book from cursor and inventory
-                player.getInventory().remove(clickedItem);
-                if (event.getCursor() != null && isDiabloBook(event.getCursor())) {
-                    player.setItemOnCursor(null);
+    public void onClick(InventoryClickEvent e) {
+        if (!e.getView().getTitle().equals("§5§lSoul Absorption")) return;
+        e.setCancelled(true);
+
+        if (e.getSlot() == 4) {
+            ItemStack cursor = e.getCursor();
+            ItemStack current = e.getCurrentItem();
+
+            if (BookProtectionListener.isSoulBookStatic(cursor) || BookProtectionListener.isSoulBookStatic(current)) {
+                ItemStack book = BookProtectionListener.isSoulBookStatic(cursor) ? cursor : current;
+                if (book != null) {
+                    performAbsorption((Player) e.getWhoClicked());
+                    e.getWhoClicked().closeInventory();
+                    if (BookProtectionListener.isSoulBookStatic(cursor)) e.setCursor(null);
+                    else e.setCurrentItem(null);
                 }
+            }
+        }
+    }
+
+    private void performAbsorption(Player p) {
+        p.sendMessage("§5§lABSORPTION STARTED...");
+        Location loc = p.getLocation();
+
+        new BukkitRunnable() {
+            int ticks = 0;
+            @Override
+            public void run() {
+                if (!p.isOnline() || ticks > 100) {
+                    createCrown(p);
+                    cancel();
+                    return;
+                }
+
+                double angle = ticks * 0.2;
+                double radius = 1.5;
+                double x = Math.cos(angle) * radius;
+                double z = Math.sin(angle) * radius;
+                double y = (ticks % 20) * 0.1;
+
+                p.getWorld().spawnParticle(Particle.DRAGON_BREATH, loc.clone().add(x, y, z), 2, 0.1, 0.1, 0.1, 0.05);
+                p.getWorld().spawnParticle(Particle.END_ROD, loc.clone().add(x, y, z), 1, 0, 0, 0, 0);
                 
-                // Perform absorption
-                plugin.getBookProtectionListener().performAbsorption(player, clickedItem);
+                ticks++;
             }
-        }
+        }.runTaskTimer(plugin, 0, 2);
     }
 
-    @EventHandler
-    public void onInventoryClose(InventoryCloseEvent event) {
-        if (!(event.getPlayer() instanceof Player player)) return;
-        
-        String title = event.getView().getTitle();
-        if (title.contains("Soul Absorption")) {
-            // Check if book is still in GUI (player didn't absorb)
-            if (event.getInventory().getItem(4) != null) {
-                ItemStack book = event.getInventory().getItem(4);
-                if (isDiabloBook(book)) {
-                    // Return book to player
-                    HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(book);
-                    if (!leftover.isEmpty()) {
-                        player.getWorld().dropItemNaturally(player.getLocation(), book);
-                    }
-                    player.sendMessage("§7Book returned to inventory.");
-                }
-            }
-        }
-    }
-
-    private boolean isDiabloBook(ItemStack item) {
-        if (item == null || item.getType() != Material.ENCHANTED_BOOK) return false;
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return false;
-        
-        if (meta.getPersistentDataContainer().has(
-                new org.bukkit.NamespacedKey(plugin, "ability"), 
-                PersistentDataType.STRING)) {
-            return true;
-        }
-        
-        return meta.hasDisplayName() && meta.getDisplayName().contains("Diablo");
+    private void createCrown(Player p) {
+        Location head = p.getLocation().add(0, 1.8, 0);
+        p.getWorld().spawnParticle(Particle.END_ROD, head, 36, 1.2, 0, 1.2, 0, 0.1);
+        p.getWorld().playSound(head, Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.5f);
+        p.sendMessage("§5§lPOWER ABSORBED! §r§dAngel Crown Activated.");
     }
 }

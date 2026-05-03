@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -10,7 +9,7 @@
     <packaging>jar</packaging>
 
     <name>DiabloSMP</name>
-    <description>The Ultimate Boss Pack for Angel SMP</description>
+    <description>Angel SMP Boss Pack - Ultimate Ability Plugin</description>
 
     <properties>
         <java.version>17</java.version>
@@ -48,13 +47,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <Built-By>DiabloDev</Built-By>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
             </plugin>
         </plugins>
         <resources>
