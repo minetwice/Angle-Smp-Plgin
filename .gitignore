@@ -4,17 +4,21 @@
 *.o
 *.obj
 *.out
-build/
 target/
 
 # Dependencies
-lib/
-libs/
-dependency-reduced-pom.xml
+node_modules/
+venv/
+.venv/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+.gradle/
 
 # Logs and temp files
 *.log
 *.tmp
+*.swp
 
 # Environment
 .env
@@ -24,15 +28,8 @@ dependency-reduced-pom.xml
 # Editors
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# Coverage
-coverage/
-htmlcov/
-.coverage
-
-# OS specific
-.DS_Store
-Thumbs.db
+# Build outputs
+dist/
+build/
 ```
