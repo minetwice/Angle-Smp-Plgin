@@ -1,45 +1,36 @@
 ```
-# Compiled and build artifacts
+# Compiled Java files
 *.class
-*.o
-*.obj
-*.out
+
+# Build directories
 target/
 build/
 
 # Dependencies
 lib/
 libs/
-dependency-reduced-pom.xml
 
-# Logs and temp files
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# Logs
 *.log
-*.tmp
-*.swp
 
 # Environment
 .env
 .env.local
 *.env.*
 
-# Editors
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS specific
+# OS files
 .DS_Store
 Thumbs.db
 
-# Coverage reports
-coverage/
-htmlcov/
-.coverage
-
-# Package manager caches
-.gradle/
-.mypy_cache/
-.pytest_cache/
-__pycache__/
+# Temporary files
+*.tmp
+*.temp
+*~
 ```
