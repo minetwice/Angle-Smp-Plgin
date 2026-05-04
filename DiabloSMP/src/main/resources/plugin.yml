@@ -1,0 +1,26 @@
+name: DiabloSMP
+version: '2.0-Heavy'
+main: com.diablo.smp.DiabloPlugin
+api-version: '1.21'
+authors: [DiabloDev-Pro]
+description: Angel SMP Boss Pack - Heavy Edition with Mass Particles & Advanced Features
+
+commands:
+  diablo:
+    description: Main admin command for DiabloSMP Heavy
+    usage: "/diablo <give|remove|info|reload|stats> [args]"
+    permission: diablo.admin
+    tab-complete: true
+  trust:
+    description: Initiate a secure trade window for Soul Books
+    usage: "/trust <player>"
+    permission: diablo.trust
+    tab-complete: true
+
+permissions:
+  diablo.admin:
+    description: Full access to plugin commands
+    default: op
+  diablo.trust:
+    description: Ability to use trust system
+    default: true
