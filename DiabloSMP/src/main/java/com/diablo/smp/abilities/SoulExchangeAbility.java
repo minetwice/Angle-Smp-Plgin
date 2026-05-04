@@ -36,7 +36,17 @@ public class SoulExchangeAbility {
         target.sendMessage("§4§l♦ YOUR SOUL IS BEING TAKEN!");
         target.sendMessage("§cYou are under control for 30 seconds.");
         target.sendMessage("");
-        target.playSound(target.getLocation(), org.bukkit.Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 0.5f);
+        
+        // Play sound using Adventure API (Paper 1.21+)
+        target.playSound(
+            net.kyori.adventure.sound.Sound.sound(
+                org.bukkit.Sound.ENTITY_ENDERMAN_TELEPORT.getKey(),
+                net.kyori.adventure.sound.Sound.Source.HOSTILE,
+                1.0f,
+                0.5f
+            ),
+            net.kyori.adventure.sound.Sound.Emitter.self()
+        );
 
         // Statue Effect on Controller
         controller.setInvulnerable(true);
